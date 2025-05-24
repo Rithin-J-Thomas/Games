@@ -1,17 +1,17 @@
 # Pong Game
-================
+
 This is a simple two-player Pong game implemented in C++ using the [raylib](https://www.raylib.com/) library.
 The first player to reach 10 points wins the game.
 
 ## Features
-================
+
 * Two-player gameplay.
 * Basic scorekeeping.
 * Sound effects for paddle hits and losing the ball.
 
 
 ## Controls
-================
+
 ### Player 1 (Left Paddle)
 
 ***W:** Move Up
