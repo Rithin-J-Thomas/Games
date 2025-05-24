@@ -5,7 +5,7 @@
 int Point_System(int *player_point, bool *game_over, int turn)
 {
 	// std::cout<<player_point;
-	if (*player_point == 3)
+	if (*player_point == 9)
 	{
 		DrawText(TextFormat("Player %2i Wins", turn), (GetMonitorWidth(0) / 3) + 140, GetMonitorHeight(0) / 3, 50, RED);
 
@@ -40,7 +40,7 @@ void Diagonal_motion(int* ball_y, int* ball_speed_Y)
 
 }
 
-void Ball_hit_paddle(int *player_1_pos, int *player_2_pos, int *ball_x,  int *ball_y, int *ball_speed_X, int*  ball_speed_Y )
+void Ball_hit_paddle(int *player_1_pos, int *player_2_pos, int *ball_x,  int *ball_y, int *ball_speed_X, int*  ball_speed_Y ,Music hit_paddle_music)
 {
 	int player_2_pos_end = *player_2_pos + 200;
 	int player_1_pos_end = *player_1_pos + 200;
@@ -52,6 +52,7 @@ void Ball_hit_paddle(int *player_1_pos, int *player_2_pos, int *ball_x,  int *ba
 		// 360 560
 		if ((*player_1_pos <= *ball_y) && (player_1_pos_end >= *ball_y))
 		{
+			UpdateMusicStream(hit_paddle_music);
 			
 			// // //This is for dividing  player board into 7  parts 1,2,3	 , 	5,6,7 has 30 pixel and 4 has 20 pixel (4 is center to make ball go striaght )
 			int player_1_pos_part1 = *player_1_pos + 30 ; 
@@ -120,8 +121,11 @@ void Ball_hit_paddle(int *player_1_pos, int *player_2_pos, int *ball_x,  int *ba
 
 	else if (*ball_x == 1775 || *ball_x == 1780)
 	{
+
 		if ((*player_2_pos <= *ball_y) && (player_2_pos_end >= *ball_y))
 		{
+			UpdateMusicStream(hit_paddle_music);
+
 			*ball_speed_X *= -1;
 
 			int player_2_pos_part1 = *player_2_pos + 30;
@@ -194,28 +198,30 @@ void Reset_Ball(int *ball_x,int* ball_y, int *ball_speed_X , int *ball_speed_Y ,
 
 	*ball_x = 960;
 	*ball_y = (height / 3) + 100;
+	*ball_speed_Y = 0;
 
 }
 
 
-
-void Lost_ball(int *ball_x,int* ball_y, int ball_speed_X, int ball_speed_Y, int *player_1_point, int *player_2_point, bool *game_over , int height)
+void Lost_ball(int *ball_x,int* ball_y, int *ball_speed_X, int *ball_speed_Y, int *player_1_point, int *player_2_point, bool *game_over , int height , Music lost_ball_music)
 {
 	// std::cout<<*ball_x<<"\n";
 
 	if (*ball_x >= 2000)
 	{
-
+		UpdateMusicStream(lost_ball_music);
 		int playr_1_point = Point_System(player_1_point, game_over, 1);
 
-		Reset_Ball(ball_x,ball_y, &ball_speed_X,&ball_speed_Y, height);
 
+		Reset_Ball(ball_x,ball_y, ball_speed_X, ball_speed_Y, height);
 		// std::cout<<player_1_point<<"\n";
 	}
 	else if (*ball_x <= 0)
 	{
+		UpdateMusicStream(lost_ball_music);
 		int playr_2_point = Point_System(player_2_point, game_over, 2);
-		Reset_Ball(ball_x,ball_y, &ball_speed_X,&ball_speed_Y , height);
+
+		Reset_Ball(ball_x,ball_y, ball_speed_X, ball_speed_Y, height);
 	}
 }
 
@@ -252,6 +258,16 @@ int main()
 	height = GetMonitorHeight(0);
 	width = GetMonitorWidth(0);
 
+	InitAudioDevice();
+
+	Music theme_music = LoadMusicStream("assets/game_music.wav");
+	Music lost_ball_music = LoadMusicStream("assets/lost_ball.wav");
+	Music hit_paddle_music = LoadMusicStream("assets/hit.wav");
+
+	PlayMusicStream(theme_music);
+	PlayMusicStream(lost_ball_music);
+	PlayMusicStream(hit_paddle_music);
+
 	bool game_over = false;
 
 	int ball_speed_X = 10 , ball_speed_Y = 0;
@@ -271,6 +287,7 @@ int main()
 	while (!WindowShouldClose())
 	{		
 
+		UpdateMusicStream(theme_music);
 		BeginDrawing();
 
 		if (game_over == false)
@@ -294,14 +311,15 @@ int main()
 		if(ball_y <= 25 || ball_y >= 960)
 		{
 			ball_speed_Y  *= -1;
+			UpdateMusicStream(hit_paddle_music);
 		}
 
 		// // //for right side board
 		DrawRectangle(1800, player_2_Y, 30, 200, WHITE);
 
-		Ball_hit_paddle(&player_1_Y, &player_2_Y, &ball_x, &ball_y, &ball_speed_X, &ball_speed_Y);
+		Ball_hit_paddle(&player_1_Y, &player_2_Y, &ball_x, &ball_y, &ball_speed_X, &ball_speed_Y,hit_paddle_music);
 
-		Lost_ball(&ball_x,&ball_y, ball_speed_X , ball_speed_Y, &player_point_1, &player_point_2, &game_over , height);
+		Lost_ball(&ball_x,&ball_y, &ball_speed_X , &ball_speed_Y, &player_point_1, &player_point_2, &game_over , height , lost_ball_music);
 
 		// // //scoreboard of both players
 		DrawText(TextFormat("Score\t%02i", player_point_1), 100, 10, 50, WHITE);
@@ -309,14 +327,9 @@ int main()
 
 
 		}
-		else
-		{
-			//std::cout<<"Game over";
-		}            
+    
 		EndDrawing();
 	}
-
-
 
 	CloseWindow();
 	return 0;
