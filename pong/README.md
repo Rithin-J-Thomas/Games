@@ -25,3 +25,8 @@ The first player to reach 10 points wins the game.
 
 > [!NOTE]
 > Game works but not optimal or optimized .
+
+
+##Screenshot
+
+![Alt text](assets/image.png)

@@ -1,4 +1,4 @@
-#Snake Game
+# Snake Game
 
 > [!WARNING]
 > Not a complete project.
