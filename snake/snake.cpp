@@ -2,12 +2,15 @@
 #include "raylib.h"
 #include <iostream>
 
+
 int snake_x = 800, snake_y = 400;
 int *addr_x = &snake_x, *addr_y = &snake_y;
+extern char where_to;
 
 void Snake::render_snake()
 {
         DrawRectangle(snake_x, snake_y, 50, 50, BLACK);
+
 }
 
 void Snake::move_snake(char where_to)

@@ -6,7 +6,7 @@ class Snake
 public:
         void render_snake();
 
-        void move_snake(char where_to);
+        void move_snake(char where_to );
 };
 
 #endif

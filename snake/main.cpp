@@ -9,9 +9,10 @@
 
 int main()
 {
-        extern int snake_x, snake_y;
+        extern int snake_x, snake_y, score;
 
-        int screen_height, screen_width;
+        int screen_height, screen_width, snake_speed = 10;
+        bool game_over = false;
 
         screen_height = GetScreenHeight();
         screen_width = GetScreenWidth();
@@ -30,16 +31,27 @@ int main()
                 BeginDrawing();
                 ClearBackground(DARKGREEN);
 
-                food_obj.spawn_food();    // // //Renders food
-                snake_obj.render_snake(); // // //Renders Snake
-
-                if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+                if (!game_over)
                 {
-                        return WindowShouldClose();
-                }
+                        food_obj.spawn_food();    // // //Renders food
+                        snake_obj.render_snake(); // // //Renders Snake
 
-                other_obj.user_input();
-                other_obj.eat_food(&snake_x, &snake_y, food_obj.food_x, food_obj.food_y, food_obj);
+                        if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+                        {
+                                return WindowShouldClose();
+                        }
+
+                        other_obj.user_input();
+                        other_obj.eat_food(&snake_x, &snake_y, food_obj.food_x, food_obj.food_y, food_obj);
+
+                        other_obj.CheckGameOver(snake_x, snake_y,game_over);
+
+                        DrawText(TextFormat("Score: %2i", score), 100, 80, 60, LIGHTGRAY);
+                }
+                else
+                {
+                        DrawText(TextFormat("GAME OVER \n Score: %2i", score), 800, 480, 60, LIGHTGRAY);
+                }
 
                 EndDrawing();
         }
