@@ -7,15 +7,15 @@
 int score = 0;
 
 Snake snake_obj;
+Color darker_green = {3, 84, 0, 255};
 
-void Other::user_input()
+void  Other::user_input()
 {
         if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) // // //exit shortcut
         {
                 char where_to = 'r';
                 snake_obj.move_snake(where_to);
 
-                // snake_x += snake_speed;
         }
         else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) // // //exit shortcut
         {
@@ -60,14 +60,20 @@ void Other::eat_food(int *x, int *y, int fx, int fy, Food &food)
         }
 }
 
-void Other::CheckGameOver(int snake_x,int snake_y,bool &game_over)
+void Other::CheckGameOver(int snake_x, int snake_y, bool &game_over)
 {
-        std::cout<<snake_x<<"\t"<<snake_y<<"\n";
+        // std::cout<<snake_x<<"\t"<<snake_y<<"\n";
 
-        if(snake_x <= 0 || snake_x >= 1880 || snake_y <= 0 || snake_y >=990)
+        if (snake_x <= 50 || snake_x >= 1820 || snake_y <= 50 || snake_y >= 940)
         {
                 game_over = true;
         }
+}
 
-
+void Other::Border()
+{
+        DrawRectangle(0, 0, 50, 1080, darker_green);
+        DrawRectangle(1870, 0, 50, 1080, darker_green);
+        DrawRectangle(0, 0, 1920, 50, darker_green);
+        DrawRectangle(0, 990, 1920, 50, darker_green);
 }

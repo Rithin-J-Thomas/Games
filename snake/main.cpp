@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "raylib.h"
 #include "snake.hpp"
 #include "food.hpp"
@@ -33,6 +32,8 @@ int main()
 
                 if (!game_over)
                 {
+
+                        other_obj.Border();     // // //Renders border
                         food_obj.spawn_food();    // // //Renders food
                         snake_obj.render_snake(); // // //Renders Snake
 
@@ -44,13 +45,19 @@ int main()
                         other_obj.user_input();
                         other_obj.eat_food(&snake_x, &snake_y, food_obj.food_x, food_obj.food_y, food_obj);
 
-                        other_obj.CheckGameOver(snake_x, snake_y,game_over);
+                        other_obj.CheckGameOver(snake_x, snake_y, game_over);
 
                         DrawText(TextFormat("Score: %2i", score), 100, 80, 60, LIGHTGRAY);
                 }
                 else
                 {
                         DrawText(TextFormat("GAME OVER \n Score: %2i", score), 800, 480, 60, LIGHTGRAY);
+
+                        if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+                        {
+                                return WindowShouldClose();
+                        }
+
                 }
 
                 EndDrawing();

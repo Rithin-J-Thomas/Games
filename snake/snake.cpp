@@ -17,19 +17,19 @@ void Snake::move_snake(char where_to)
 {
         if (where_to == 'r')
         {
-                *addr_x += 5;
+                *addr_x += 10;
         }
         else if (where_to == 'l')
         {
-                *addr_x -= 5;
+                *addr_x -= 10;
         }
         else if (where_to == 'u')
         {
-                *addr_y -= 5;
+                *addr_y -= 10;
         }
         else if (where_to == 'd')
         {
-                *addr_y += 5;
+                *addr_y += 10;
         }
 
         // eat_food(&snake_x,&snake_y);

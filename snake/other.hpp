@@ -15,6 +15,8 @@ public:
 
         void CheckGameOver(int snake_x,int snake_y,bool &game_over);
 
+        void Border();
+
 };
 
 #endif
