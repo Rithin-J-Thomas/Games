@@ -4,10 +4,7 @@
 #include <raylib.h>
 
 // // //global variables
-
-int screenWidth = GetMonitorWidth(0);
-int screenHeight = GetMonitorHeight(0);
-
+int screenWidth = GetMonitorWidth(0), screenHeight = GetMonitorHeight(0);
 
 int main()
 {
@@ -16,43 +13,53 @@ int main()
        InitWindow(screenWidth, screenHeight, "BOUND BY TIME");
 
 
+
        SetWindowPosition(0, 10);
 
        Player playerObj;
        Other otherObj;
+       Box BoxObj;
+       MiniGame minigameObj;
 
        SetTargetFPS(60);
 
        playerObj.LoadPlayerImage();
        otherObj.loadBackgroundImage();
+       BoxObj.loadMissioBoxImage();
+
+       screenWidth = GetMonitorWidth(0), screenHeight = GetMonitorHeight(0);
+       int screenSize[2] = {screenWidth, screenHeight};
 
        while (!WindowShouldClose())
 
        {
-              screenWidth = GetMonitorWidth(0), screenHeight = GetMonitorHeight(0); // // takes screen size both Height , Width
 
               BeginDrawing();
 
               ClearBackground(WHITE);
 
               otherObj.renderBackgroundImage();
-              playerObj.renderPlayerImg();
 
+              BoxObj.renderMissioBoxImage();
+
+              playerObj.renderPlayerImg();
 
               if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
               {
-                     return WindowShouldClose();// //  Exit shortcut
+                     return WindowShouldClose(); // //  Exit shortcut
               }
 
               playerObj.movePlayer();
 
+              otherObj.playerTouchMiniGame(playerObj, BoxObj, screenSize);
 
-
+              DrawFPS(100, 100);
               EndDrawing();
        }
 
        playerObj.unloadPlayerImage();
-       otherObj.unloadPlayerImage();
+       otherObj.unloadBackgroundImage();
+       BoxObj.unloadMissioBoxImage();
        CloseWindow();
        return 0;
 }

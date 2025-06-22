@@ -3,18 +3,14 @@
 
 #include <raylib.h>
 
-
-
 class Player
 {
 public:
-
         Texture2D playerImageFull;
-        Rectangle playerSource ,playerDestination;
-        Vector2 playerPosition ,playerOrigin;
+        Rectangle playerSource, playerDestination;
+        Vector2 playerPosition, playerOrigin;
 
-
-        float playerRotation ;
+        float playerRotation;
 
         void LoadPlayerImage();
 
@@ -23,7 +19,6 @@ public:
         void unloadPlayerImage();
 
         void movePlayer();
-
 };
 
 #endif
