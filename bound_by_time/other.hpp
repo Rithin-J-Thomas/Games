@@ -2,18 +2,19 @@
 #define MY_OTHER_HPP
 
 #include <raylib.h>
+#include <vector>
 
-
-void printArrayInDecipher(char *lettersArr, int elementStart, int elementEnd, int *nextLineFromYpos,Color fontColor);
+void printArrayInDecipher(char *lettersArr, int elementStart, int elementEnd, int *nextLineFromYpos, Color fontColor);
 void decipherGameInfo();
-
 
 class MiniGame
 {
 public:
         void GameDecipher(Player *playerobj, bool *game, int screenSize[2]);
+        void userInput();
+        char generateRandomCodes();
 
-
+        void checkCodeCraked(std::vector <char> codeGeneratedVector , std::vector <char> userInputVector);
 };
 
 class Box

@@ -1,14 +1,22 @@
 #include <iostream>
+#include <random>
 #include "player.hpp"
 #include "other.hpp"
+#include "string"
+
+// // // std::cout<<" \n" ;
 
 extern int screenWidth, screenHeight;
 
-Color bgColor = {36, 43, 54,255};
-Color fontColor = {255, 36, 36,255};
+Color bgColor = {36, 43, 54, 255};
+Color fontColor = {255, 36, 36, 255};
 
+std::vector<char> userLettersVector, codeGeneratedVector , correctCode; // // // stores user's input , random code Generated , correct Code after shift
+char lettersArr[52];
 
-void printArrayInDecipher(char *lettersArr, int elementStart, int elementEnd, int *nextLineFromXpos , Color fontColor)
+int score = 0 , shift;
+
+void printArrayInDecipher(char *lettersArr, int elementStart, int elementEnd, int *nextLineFromXpos, Color fontColor)
 {
         int drawTextAreaYpos = screenHeight / 10 + *nextLineFromXpos, drawTextAreaXpos = screenWidth / 2 + screenWidth / 6;
 
@@ -24,17 +32,19 @@ void printArrayInDecipher(char *lettersArr, int elementStart, int elementEnd, in
 void decipherGameInfo()
 {
 
-        DrawText("HOW TO PLAY",screenWidth/3,screenHeight/10,30,WHITE);
+        DrawText("HOW TO PLAY", screenWidth / 5, screenHeight / 10, 30, fontColor);
 
+        std::string how = {
+            " \nYou will be given a coded word and a shift number \nShift each letter forward in the alphabet by the given number\na becomes b or B becomes C and so on\nThe case (uppercase / lowercase) applies the same \nDecode all letters to find the solution \n"};
+
+        DrawText(how.c_str(), screenWidth / 9, screenHeight / 10 + 20, 30, WHITE);
 }
 
-
-
-// // // std::cout<<" \n" ;
 void MiniGame::GameDecipher(Player *playerobj, bool *game, int *screenSize)
 {
-        char lettersArr[52];
         int index = 0;
+        shift = GetRandomValue(1,5);
+
         for (char i = 'A'; i <= 'Z'; i++)
         {
                 lettersArr[index++] = i;
@@ -44,6 +54,14 @@ void MiniGame::GameDecipher(Player *playerobj, bool *game, int *screenSize)
                 lettersArr[index++] = i;
         }
 
+        
+        int i = 0;
+        while (i < 8)
+        {
+                codeGeneratedVector.push_back(char(generateRandomCodes()));
+
+                ++i;
+        }
 
         while (*game == true)
         {
@@ -57,32 +75,97 @@ void MiniGame::GameDecipher(Player *playerobj, bool *game, int *screenSize)
                         playerobj->playerDestination.y = (float)screenSize[1] / 2.0f;
                 }
 
-                DrawText("LETTERS (HINT)", screenWidth / 2 + screenWidth / 6 , screenHeight / 15 , 30, fontColor);
+                DrawText("LETTERS (HINT)", screenWidth / 2 + screenWidth / 6, screenHeight / 15, 30, fontColor);
 
                 int nextLineFromXpos = 15;
-                printArrayInDecipher(lettersArr, 0, 10, &nextLineFromXpos,fontColor);
-                printArrayInDecipher(lettersArr, 11, 21, &nextLineFromXpos,fontColor);
-                printArrayInDecipher(lettersArr, 22, 32, &nextLineFromXpos,fontColor);
-                printArrayInDecipher(lettersArr, 33, 43, &nextLineFromXpos,fontColor);
-                printArrayInDecipher(lettersArr, 44, 52, &nextLineFromXpos,fontColor);
+                printArrayInDecipher(lettersArr, 0, 10, &nextLineFromXpos, fontColor);
+                printArrayInDecipher(lettersArr, 11, 21, &nextLineFromXpos, fontColor);
+                printArrayInDecipher(lettersArr, 22, 32, &nextLineFromXpos, fontColor);
+                printArrayInDecipher(lettersArr, 33, 43, &nextLineFromXpos, fontColor);
+                printArrayInDecipher(lettersArr, 44, 52, &nextLineFromXpos, fontColor);
 
+                DrawText("EXAMPLE OF GAME", screenWidth / 2 + screenWidth / 6, screenHeight / 2 + screenHeight / 5, 30, fontColor);
 
-                DrawText("EXAMPLE OF GAME", screenWidth / 2 + screenWidth / 6 , screenHeight / 2 + screenHeight / 5  ,30, fontColor);
-
-                
-                DrawText("Word = ABcDe  Shift = 1\n Solution = BCdEf ", screenWidth / 2 + screenWidth / 6 , screenHeight / 2 + screenHeight / 4  ,30, fontColor);
+                DrawText("Word = ABcDe  Shift = 1\n Solution = BCdEf \n\nWord = ZzaBcD Shift = 1\n Solution = AabCdE \n", screenWidth / 2 + screenWidth / 6, screenHeight / 2 + screenHeight / 4, 30, WHITE);
 
                 decipherGameInfo();
-                
 
+                int drawTextXposOfCodeGenerated = screenWidth / 2 - screenWidth / 6, drawTextYposOfCodeGenerated = screenHeight / 2 + screenHeight / 6;
+                for (int i = 0; i < codeGeneratedVector.size(); i++)
+                {
+                        char ch[2] = {codeGeneratedVector[i], '\0'};
+
+                        DrawText(ch, drawTextXposOfCodeGenerated, drawTextYposOfCodeGenerated, 45, WHITE);
+                        drawTextXposOfCodeGenerated += 50;
+                }
+
+                userInput();
+
+                int userInputAnswerDisplayXpos = screenWidth / 10;
+
+                for (int i = 0; i < userLettersVector.size(); ++i)
+                {
+                        std::string charToStringedLetter(1, userLettersVector[i]);
+                        DrawText(charToStringedLetter.c_str(), userInputAnswerDisplayXpos, screenHeight / 3, 30, WHITE);
+                        userInputAnswerDisplayXpos += 25;
+                }
+
+                checkCodeCraked(userLettersVector, codeGeneratedVector);
 
                 EndDrawing();
         }
 }
 
+void MiniGame::userInput()
+{
+        int letterPressedIs = GetCharPressed();
 
+        if ((letterPressedIs >= 65 && letterPressedIs <= 90) || (letterPressedIs >= 97 && letterPressedIs <= 122))
+        {
 
+                userLettersVector.push_back(char(letterPressedIs)); // // // a-z A-Z will pushed into Vector
+        }
+        else if (IsKeyPressed(KEY_BACKSPACE)) // // // delete letters like BACKSPACE
+        {
+                if (userLettersVector.size() != 0) // // // check if its empty Vector or not to avoid errors
+                {
+                        userLettersVector.pop_back();
+                }
+        }
+}
 
+char MiniGame::generateRandomCodes()
+{
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        char randomChar;
+
+        std::uniform_int_distribution<> distrib(0, sizeof(lettersArr) - 1);
+        randomChar = lettersArr[distrib(gen)];
+        std::cout << "\nRandom character: " << randomChar << "\n";
+
+        return randomChar;
+}
+
+void MiniGame::checkCodeCraked(std::vector<char> codeGeneratedVector, std::vector<char> userLettersVector)
+{
+        if (codeGeneratedVector.size() >= userLettersVector.size())
+        {
+                for (int i = 0; i < codeGeneratedVector.size(); ++i)
+                {
+                        if (codeGeneratedVector[i] != userLettersVector[i])
+                        {
+                                DrawText("CODE WAS WRONG", 100, 100, 30, GREEN);
+                        }
+                        else
+                        {
+                                ++score;
+                                std::string scoreDisplayStr = "SCORE = " + score;
+                                DrawText(scoreDisplayStr.c_str(), 300, 300, 45, GOLD);
+                        }
+                }
+        }
+}
 
 void Box::loadMissioBoxImage()
 {
